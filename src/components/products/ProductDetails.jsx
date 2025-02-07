@@ -18,14 +18,24 @@ const ProductDetails = () => {
   }, [params.id]);
 
   return (
-    <div>
-      <Link to="/products">Voltar</Link>
-      <h1>Product Details</h1>
-      <img style={{ width: "50%" }} src={product?.images} alt={product?.name} />
-      <h2>{product?.name}</h2>
-      <p>{product?.description}</p>
-      <p>Price: ${product?.price}</p>
-    </div>
+    <>
+      {product ? (
+        <div>
+          <Link to="/products">Voltar</Link>
+          <h1>Product Details</h1>
+          <img
+            style={{ width: "50%" }}
+            src={product?.images}
+            alt={product?.name}
+          />
+          <h2>{product?.name}</h2>
+          <p>{product?.description}</p>
+          <p>Price: ${product?.price}</p>
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
+    </>
   );
 };
 

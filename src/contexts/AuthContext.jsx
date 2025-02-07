@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }) => {
         login,
         registerUser,
         logout,
-        isAdmin: user?.isAdmin === true,
+        isAdmin: user?.isAdmin,
       }}
     >
       {children}

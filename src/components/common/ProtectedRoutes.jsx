@@ -1,30 +1,32 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 // Rota para usuários normais
 export const PrivateRoute = () => {
+  const navigate = useNavigate();
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
     return <div>Carregando...</div>;
   }
 
-  return user ? <Outlet /> : <Navigate to="/login" />;
+  return user ? <Outlet /> : navigate("/login");
 };
 
 // Rota para administradores
 export const AdminRoute = () => {
-  const { user, isLoading } = useAuth();
+  const { user, isAdmin, isLoading } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
-    return <div>Carregando...</div>;
+    return <div>Loading...</div>;
   }
 
-  return user && user.isAdmin === true ? (
-    <Navigate to="/admin" />
-  ) : (
-    <Navigate to="/unauthorized" />
-  );
+  if (!user || !isAdmin) {
+    return <Navigate to="/unauthorized" state={{ from: location }} replace />;
+  }
+
+  return <Outlet />;
 };
 
 // Rota de login

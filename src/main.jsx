@@ -9,14 +9,16 @@ import {
   LoginRoute,
 } from "./components/common/ProtectedRoutes";
 import Layout from "./components/layout/MainLayout";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/Authentication/LoginPage";
+import RegisterPage from "./pages/Authentication/RegisterPage";
 import HomePage from "./pages/HomePage";
-import Unauthorized from "./pages/Unauthorized";
-import ProductsPage from "./pages/ProductsPage";
+import Unauthorized from "./pages/Errors/Unauthorized";
+import ProductsPage from "./pages/Product/ProductsPage";
 import AboutPage from "./pages/AboutPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import ProductDetails from "./pages/ProductDetails";
+import NotFoundPage from "./pages/Errors/NotFoundPage";
+import ProductDetails from "./components/products/ProductDetails";
+import NewProductPage from "./pages/Product/NewProductPage";
+import ProfilePage from "./pages/Authentication/ProfilePage";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -27,8 +29,11 @@ createRoot(document.getElementById("root")).render(
             <Route index element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
 
-            <Route path="/products" element={<ProductsPage />} />
-          <Route path="/products/:id" element={<ProductDetails />} />
+            {/* Agrupe as rotas de produtos públicas */}
+            <Route path="/products">
+              <Route index element={<ProductsPage />} />
+              <Route path=":id" element={<ProductDetails />} />
+            </Route>
 
             <Route element={<LoginRoute />}>
               <Route path="/login" element={<LoginPage />} />
@@ -36,14 +41,17 @@ createRoot(document.getElementById("root")).render(
             </Route>
 
             <Route element={<PrivateRoute />}>
-              <Route
-                path="/"
-                element={<div>bem vindo usuario autenticado</div>}
-              />
+              <Route path="/profile" element={<ProfilePage />} />
             </Route>
 
-            <Route element={<AdminRoute />}>
-              <Route path="/admin" element={<div>bem vindo admin</div>} />
+            {/* Rotas administrativas */}
+            <Route path="/admin" element={<AdminRoute />}>
+              <Route index element={<HomePage />} />
+              {/* Agrupe as rotas administrativas de produtos */}
+              <Route path="products">
+                <Route path="new" element={<NewProductPage />} />
+              </Route>
+              <Route path="users" element={<div>Gerenciar Usuários</div>} />
             </Route>
 
             <Route path="/unauthorized" element={<Unauthorized />} />

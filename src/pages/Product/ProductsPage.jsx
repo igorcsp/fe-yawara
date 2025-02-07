@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import ProductCard from "../components/products/ProductCard";
-import { useAuth } from "../contexts/AuthContext";
+import ProductCard from "../../components/products/ProductCard";
+import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
 
 const ProductsPage = () => {
@@ -22,7 +22,7 @@ const ProductsPage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       {user?.isAdmin && (
-        <Link to="/products/new" className="bg-blue-500 text-white p-2 rounded">
+        <Link to="/admin/products/new" className="bg-blue-500 text-white p-2 rounded">
           Adicionar produto
         </Link>
       )}
