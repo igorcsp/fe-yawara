@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="fixed bottom-0 w-full bg-gray-800 text-white p-4 text-center">
+    <footer className="fixed bottom-0 w-full bg-gray-800 p-4 text-white text-center">
       <p>© 2025 Yawara. All rights reserved.</p>
     </footer>
   );

@@ -6,9 +6,9 @@ const Header = () => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
     navigate("/");
+    logout();
   };
 
   const getNavLinkClass = ({ isActive, isPending }) => {
@@ -22,7 +22,7 @@ const Header = () => {
   };
 
   return (
-    <header className="flex flex-row justify-between items-center p-4 bg-gray-800">
+    <header className="flex flex-row justify-between p-4 Fitems-center bg-gray-800">
       <NavLink className={getNavLinkClass} to="/">
         Yawara logo
       </NavLink>

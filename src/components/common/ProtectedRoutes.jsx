@@ -16,14 +16,13 @@ export const PrivateRoute = () => {
 // Rota para administradores
 export const AdminRoute = () => {
   const { user, isAdmin, isLoading } = useAuth();
-  const location = useLocation();
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   if (!user || !isAdmin) {
-    return <Navigate to="/unauthorized" state={{ from: location }} replace />;
+    return <Navigate to="/unauthorized" />;
   }
 
   return <Outlet />;

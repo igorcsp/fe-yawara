@@ -4,9 +4,9 @@ import Header from "../common/Header";
 
 const Layout = () => {
   return (
-    <div className="min-h-screen bg-blue-50">
+    <div className="min-h-screen bg-blue-50 box-border">
       <Header />
-      <div className="flex flex-col items-center justify-center font-bold">
+      <div className="flex flex-col items-center justify-center font-bold mt-8">
         <Outlet />
       </div>
       <Footer />

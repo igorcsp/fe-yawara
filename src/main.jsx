@@ -29,10 +29,10 @@ createRoot(document.getElementById("root")).render(
             <Route index element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
 
-            {/* Agrupe as rotas de produtos públicas */}
             <Route path="/products">
               <Route index element={<ProductsPage />} />
               <Route path=":id" element={<ProductDetails />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Route>
 
             <Route element={<LoginRoute />}>
@@ -44,18 +44,16 @@ createRoot(document.getElementById("root")).render(
               <Route path="/profile" element={<ProfilePage />} />
             </Route>
 
-            {/* Rotas administrativas */}
             <Route path="/admin" element={<AdminRoute />}>
               <Route index element={<HomePage />} />
-              {/* Agrupe as rotas administrativas de produtos */}
               <Route path="products">
                 <Route path="new" element={<NewProductPage />} />
               </Route>
               <Route path="users" element={<div>Gerenciar Usuários</div>} />
             </Route>
 
-            <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="*" element={<NotFoundPage />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
           </Route>
         </Routes>
       </Router>

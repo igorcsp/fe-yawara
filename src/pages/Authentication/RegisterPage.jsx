@@ -1,136 +1,143 @@
-import { useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { useAuth } from "../../contexts/AuthContext";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import Input from "../../components/common/Input";
-
-const registerSchema = yup.object().shape({
-  name: yup.string().required("Nome é obrigatório"),
-  email: yup
-    .string()
-    .email("Por favor, insira um email válido")
-    .required("Email é obrigatório"),
-  password: yup
-    .string()
-    .min(8, "A senha deve ter no mínimo 8 caracteres")
-    .required("Senha é obrigatória"),
-  phone: yup
-    .string()
-    .matches(/^\d{11}$/, "Telefone deve ter 11 dígitos")
-    .required("Telefone é obrigatório"),
-  address: yup.object().shape({
-    street: yup.string().required("Rua é obrigatória"),
-    city: yup.string().required("Cidade é obrigatória"),
-    state: yup.string().required("Estado é obrigatório"),
-    zipCode: yup.string().required("CEP é obrigatório"),
-  }),
-});
+import { useAuth } from "../../contexts/AuthContext";
+import InputField from "../../components/forms/InputField";
+import SubmitButton from "../../components/forms/SubmitButton";
 
 const RegisterPage = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { registerUser } = useAuth();
   const navigate = useNavigate();
 
-  const methods = useForm({
-    resolver: yupResolver(registerSchema),
-    mode: "onBlur",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      phone: "",
+      address: {
+        street: "",
+        city: "",
+        state: "",
+        zipCode: "",
+      },
+    },
   });
 
-  const {
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = methods;
-
   const onSubmit = async (data) => {
-    console.log(data);
     try {
+      setIsLoading(true);
       setError("");
       const success = await registerUser(data);
       if (success) {
-        reset();
         navigate("/login");
       } else {
-        setError("Erro ao cadastrar usuário");
+        setError("Registration failed. Please try again.");
       }
     } catch (err) {
-      setError("Ocorreu um erro durante o cadastramento");
+      setError("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="sm:mx-auto sm:w-full sm:max-w-md">
-      <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-        Cadastro
-      </h2>
-      <div className="mt-8 bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-        {error && (
-          <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-            {error}
+    <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow mb-8">
+      <div>
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Crie sua conta
+        </h2>
+      </div>
+
+      {error && (
+        <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm">
+          {error}
+        </div>
+      )}
+
+      <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-4">
+          <InputField
+            label="Nome completo"
+            name="name"
+            register={register}
+            error={errors.name}
+          />
+
+          <InputField
+            label="E-mail"
+            name="email"
+            type="email"
+            register={register}
+            validationObject={{ required: "Email is required" }}
+            error={errors.email}
+          />
+
+          <InputField
+            label="Senha"
+            name="password"
+            type="password"
+            register={register}
+            validationObject={{ required: "Email is required" }}
+            error={errors.password}
+          />
+
+          <InputField
+            label="Telefone"
+            name="phone"
+            register={register}
+            validationObject={{ required: "Email is required" }}
+            error={errors.phone}
+          />
+        </div>
+
+        <div className="border-t pt-4">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Endereço </h3>
+          <div className="space-y-4">
+            <InputField
+              label="Rua"
+              name="address.street"
+              register={register}
+              validationObject={{ required: "Email is required" }}
+              error={errors?.address?.street}
+            />
+
+            <InputField
+              label="Cidade"
+              name="address.city"
+              register={register}
+              validationObject={{ required: "Email is required" }}
+              error={errors?.address?.city}
+            />
+
+            <InputField
+              label="Estado"
+              name="address.state"
+              register={register}
+              validationObject={{ required: "Email is required" }}
+              error={errors?.address?.state}
+            />
+
+            <InputField
+              label="CEP"
+              name="address.zipCode"
+              register={register}
+              validationObject={{ required: "Email is required" }}
+              error={errors?.address?.zipCode}
+            />
           </div>
-        )}
+        </div>
 
-        <FormProvider {...methods}>
-          <form
-            className="space-y-6"
-            onSubmit={handleSubmit(onSubmit)}
-            noValidate
-          >
-            <Input customLabel="Nome" name="name" placeholder="seu nome" />
-            <Input customLabel="E-mail" name="email" placeholder="seu email" />
-            <Input
-              customLabel="Senha"
-              name="password"
-              placeholder="sua senha"
-              type="password"
-            />
-            <Input
-              customLabel="Telefone"
-              name="phone"
-              placeholder="seu telefone"
-              type="tel"
-            />
+        <SubmitButton isLoading={isLoading}>Criar Conta</SubmitButton>
 
-            <fieldset className="space-y-4">
-              <legend className="block text-sm font-medium text-gray-700">
-                Endereço
-              </legend>
-              <Input
-                customLabel="Rua"
-                name="address.street"
-                placeholder="sua rua"
-              />
-              <Input
-                customLabel="Cidade"
-                name="address.city"
-                placeholder="sua cidade"
-              />
-              <Input
-                customLabel="Estado"
-                name="address.state"
-                placeholder="seu estado"
-              />
-              <Input
-                customLabel="CEP"
-                name="address.zipCode"
-                placeholder="seu CEP"
-              />
-            </fieldset>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-2 px-4 border rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
-            >
-              {isSubmitting ? "Cadastrando..." : "Cadastrar"}
-            </button>
-          </form>
-        </FormProvider>
-
-        <div className="mt-6 text-center text-sm">
-          <span className="text-gray-600">Já tem uma conta? </span>
+        <div className="text-sm text-center mt-4">
+          Já possui uma conta?{" "}
           <Link
             to="/login"
             className="font-medium text-blue-600 hover:text-blue-500"
@@ -138,7 +145,7 @@ const RegisterPage = () => {
             Entrar
           </Link>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
