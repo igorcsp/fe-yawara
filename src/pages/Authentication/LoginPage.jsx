@@ -56,7 +56,7 @@ const LoginPage = () => {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <InputField
-            label="Email Address"
+            label="E-mail"
             name="email"
             type="email"
             register={register}
@@ -65,7 +65,7 @@ const LoginPage = () => {
           />
 
           <InputField
-            label="Password"
+            label="Senha"
             name="password"
             type="password"
             register={register}

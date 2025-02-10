@@ -25,6 +25,7 @@ const NewProductPage = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
     setValue,
     trigger,
   } = useForm({
@@ -35,6 +36,11 @@ const NewProductPage = () => {
       stock: "",
       categoryId: "",
       images: [],
+    },
+    rules: {
+      images: {
+        required: "É necessário incluir pelo menos uma imagem",
+      },
     },
   });
 
@@ -47,8 +53,9 @@ const NewProductPage = () => {
 
   const onSubmit = async (data) => {
     try {
-      console.log(data);
       setIsLoading(true);
+      setError(""); // Limpa erros anteriores
+
       const formData = new FormData();
       selectedFiles.forEach((file) => {
         formData.append("images", file);
@@ -60,23 +67,25 @@ const NewProductPage = () => {
         }
       });
 
-      axios
-        .post(`${import.meta.env.VITE_API_URI}/categories`, formData, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } catch (err) {
-      setError(
-        "Um erro ocorreu ao incluir o produto. Por favor, tentar novamente."
-      );
+      await axios.post(`${import.meta.env.VITE_API_URI}/products`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      reset();
+    } catch (error) {
+      if (error.response?.data) {
+        // Se o erro for um array, pegue a primeira mensagem
+        if (Array.isArray(error.response.data)) {
+          setError(error.response.data[0].message);
+        } else {
+          // Se for uma string ou objeto simples
+          setError(error.response.data.toString());
+        }
+      } else {
+        setError("Erro ao criar produto");
+      }
     } finally {
       setIsLoading(false);
     }

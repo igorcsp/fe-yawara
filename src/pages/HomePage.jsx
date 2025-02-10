@@ -1,3 +1,4 @@
+import Logo from "../components/common/Logo";
 import { useAuth } from "../contexts/AuthContext";
 
 const HomePage = () => {
@@ -5,8 +6,8 @@ const HomePage = () => {
 
   return (
     <>
-      <h1>Bem vindo, {user?.name}</h1>
-      <h1>HomePage</h1>
+      <h1>Bem vindo{user && `, ${user?.name}`}</h1>
+      <Logo />
     </>
   );
 };

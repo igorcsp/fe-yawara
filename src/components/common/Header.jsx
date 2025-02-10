@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Logo from "./Logo";
 
 const Header = () => {
   const { logout, user } = useAuth();
@@ -22,9 +23,9 @@ const Header = () => {
   };
 
   return (
-    <header className="flex flex-row justify-between p-4 Fitems-center bg-gray-800">
-      <NavLink className={getNavLinkClass} to="/">
-        Yawara logo
+    <header className="flex flex-row justify-between p-4 items-center bg-gray-800">
+      <NavLink to="/">
+        <img src="/yawara.png" className="w-20" />
       </NavLink>
       <NavLink className={getNavLinkClass} to="/products">
         Produtos

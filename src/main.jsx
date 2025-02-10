@@ -48,8 +48,13 @@ createRoot(document.getElementById("root")).render(
               <Route index element={<HomePage />} />
               <Route path="products">
                 <Route path="new" element={<NewProductPage />} />
+                <Route path=":id" element={<ProductDetails />} />
+                <Route path=":id/edit" element={<div>edit page</div>} />
+
+                <Route path="*" element={<NotFoundPage />} />
               </Route>
               <Route path="users" element={<div>Gerenciar Usuários</div>} />
+              <Route path="*" element={<NotFoundPage />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />
