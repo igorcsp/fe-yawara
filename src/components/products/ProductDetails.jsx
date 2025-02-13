@@ -1,23 +1,36 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
-import { Link, Outlet, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { getProduct, deleteProduct } from "../../services/api";
 
 const ProductDetails = () => {
   const params = useParams();
   const [product, setProduct] = useState(null);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URI}/products/${params.id}`)
-      .then((response) => {
-        setProduct(response.data);
-      })
-      .catch((error) => {
+    const fetchProduct = async () => {
+      try {
+        const response = await getProduct(params.id);
+        setProduct(response);
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+    fetchProduct();
   }, [params.id]);
+
+  const removeProduct = async () => {
+    try {
+      navigate("/products");
+      await deleteProduct(params.id);
+      console.log("Produto deletado com sucesso", params.id);
+    } catch (error) {
+      console.error(error);
+    }
+    deleteProduct(params.id);
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -42,9 +55,14 @@ const ProductDetails = () => {
       </Link>
 
       {user?.isAdmin && (
-        <Link to={`/admin/products/${params.id}/edit`} className="px-7">
-          Editar produto
-        </Link>
+        <div className="flex justify-end mb-6">
+          <Link to={`/admin/products/${params.id}/edit`} className="px-7">
+            Editar produto
+          </Link>
+          <button className="px-7" onClick={removeProduct}>
+            Deletar produto
+          </button>
+        </div>
       )}
 
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">

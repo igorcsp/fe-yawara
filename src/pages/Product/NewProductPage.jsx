@@ -2,23 +2,25 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import InputField from "../../components/forms/InputField";
 import SubmitButton from "../../components/forms/SubmitButton";
-import axios from "axios";
+import { createProduct, getCategories } from "../../services/api";
 
 const NewProductPage = () => {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URI}/categories`)
-      .then((response) => {
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        setError("Erro ao carregar categorias:" + error);
-      });
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories();
+        setCategories(response);
+      } catch (error) {
+        setError("Erro ao carregar categorias: ", error);
+      }
+    };
+    fetchCategories();
   }, []);
 
   const {
@@ -54,7 +56,7 @@ const NewProductPage = () => {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      setError(""); // Limpa erros anteriores
+      setError("");
 
       const formData = new FormData();
       selectedFiles.forEach((file) => {
@@ -67,20 +69,16 @@ const NewProductPage = () => {
         }
       });
 
-      await axios.post(`${import.meta.env.VITE_API_URI}/products`, formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await createProduct(formData);
+      setSelectedFiles([]);
+      setSuccessMessage("Produto criado com sucesso!");
       reset();
     } catch (error) {
+      console.error(error);
       if (error.response?.data) {
-        // Se o erro for um array, pegue a primeira mensagem
         if (Array.isArray(error.response.data)) {
           setError(error.response.data[0].message);
         } else {
-          // Se for uma string ou objeto simples
           setError(error.response.data.toString());
         }
       } else {
@@ -222,6 +220,10 @@ const NewProductPage = () => {
             </div>
           )}
         </div>
+
+        {successMessage && (
+          <div className="text-green-500">{successMessage}</div>
+        )}
 
         <SubmitButton isLoading={isLoading}>Finalizar</SubmitButton>
       </form>

@@ -88,7 +88,8 @@ const ProductCard = ({
                         e.preventDefault();
                         setCurrentImageIndex(index);
                       }}
-                      className={`w-2 h-2 rounded-full transition-colors ${
+                      className={`w-1.5 h-1.5
+                         rounded-full transition-colors ${
                         currentImageIndex === index ? "bg-white" : "bg-white/50"
                       }`}
                     />
